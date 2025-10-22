@@ -24,25 +24,72 @@
 
 ### Задание 1
 
-`Приведите ответ в свободной форме........`
+### 1.1 Установка MySQL 8.0+ на Ubuntu 24.04
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+sudo apt update
+sudo apt install mysql-server -y
+mysql --version
+sudo systemctl start mysql
+sudo systemctl status mysql
+sudo mysql_secure_installation
 
-```
-Поле для вставки кода...
-....
-....
-....
-....
-```
+### 1.2 Создание пользователя sys_temp
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
+sudo mysql -u root
+CREATE USER 'sys_temp'@'localhost' IDENTIFIED BY 'password';
+EXIT;
+
+### 1.3 Получение списка пользователей
+
+sudo mysql -u root
+SELECT User, Host FROM mysql.user;
+EXIT;
+
+![zadanie1.1-1.3](screenshots/zadanie1.1-1.3.png)
+
+### 1.4 Выдача всех прав пользователю sys_temp
+
+sudo mysql -u root
+GRANT ALL PRIVILEGES ON *.* TO 'sys_temp'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+### 1.5 Просмотр прав пользователя sys_temp
+
+sudo mysql -u root
+SHOW GRANTS FOR 'sys_temp'@'localhost';
+EXIT;
+
+![zadanie1.5](screenshots/zadanie1.5.png)
+
+### 1.6 Смена метода аутентификации и подключение от sys_temp
+
+sudo mysql -u root
+ALTER USER 'sys_temp'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+FLUSH PRIVILEGES;
+EXIT;
+##### Подключение от имени sys_temp:
+mysql -u sys_temp -p
+-- (ввести пароль: password)
+EXIT;
+
+### 1.6–1.7 Скачивание и восстановление базы sakila
+
+sudo apt install unzip -y
+cd ~
+wget https://downloads.mysql.com/docs/sakila-db.zip
+unzip sakila-db.zip
+##### Создание базы и импорт:
+mysql -u sys_temp -p -e "DROP DATABASE IF EXISTS sakila; CREATE DATABASE sakila;"
+mysql -u sys_temp -p sakila < sakila-db/sakila-schema.sql
+mysql -u sys_temp -p sakila < sakila-db/sakila-data.sql
+
+### 1.8 Получение списка таблиц (для скриншота)
+
+mysql -u sys_temp -p -e "USE sakila; SHOW TABLES;"
+
+![zadanie1.8](screenshots/zadanie1.8.png)
+
 
 
 ---
